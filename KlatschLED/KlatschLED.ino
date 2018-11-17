@@ -19,11 +19,14 @@ void  setup()
 
 void  loop()
 {
-  Serial.println(checkKnockPattern(2000,3));
+  Serial.println(checkKnockPattern(2000, 3));
   delay(3000);
 }
 
 boolean checkKnockPattern(int time_dist, int knock_number) {
+  setColor(OFF, 0);
+  setColor(OFF, 1);
+  setColor(OFF, 2);
   int knockCounter = 0;
   //wait for first knock
   Serial.println("Vor schleife");
@@ -31,7 +34,7 @@ boolean checkKnockPattern(int time_dist, int knock_number) {
     delay(waitingDelay);
     val = digitalRead(buttonpin); //read the value of the digital interface 3 assigned to val
   } while (val == LOW);
-    Serial.println("Nach schleife");
+  Serial.println("Nach schleife");
 
 
   while (knockCounter < knock_number) {
@@ -39,29 +42,29 @@ boolean checkKnockPattern(int time_dist, int knock_number) {
     Serial.print("TON ");
     Serial.print(knockCounter);
     Serial.println("WAHRGENOMMEN!");
-    
-    if (knockCounter == knock_number){
+
+    if (knockCounter == knock_number) {
       //Erfolgreich
       Serial.println("checkKnockPattern erfolgreich!!!");
       return true;
     }
     lastSoundDetectTime = millis();
-    delay(250); //Let clap cling off
+    blinkGreen(); //Let clap cling off
     do {
       delay(waitingDelay);
       val = digitalRead(buttonpin); //read the value of the digital interface 3 assigned to val
-      if(millis()-lastSoundDetectTime> time_dist+tolerance){
+      if (millis() - lastSoundDetectTime > time_dist + tolerance) {
         strike();
         return false;
       }
     } while (val == LOW);
     long newSoundDetectTime = millis();
-    long timeDiff = newSoundDetectTime-lastSoundDetectTime;
-    if(timeDiff > time_dist + tolerance){
+    long timeDiff = newSoundDetectTime - lastSoundDetectTime;
+    if (timeDiff > time_dist + tolerance) {
       strike();
       return false;
     }
-    if(timeDiff < time_dist - tolerance) {
+    if (timeDiff < time_dist - tolerance) {
       strike();
       return false;
     }
@@ -102,5 +105,15 @@ void doubleKnock() {
 void strike() {
   //TODO
   Serial.println("STRIKEEEEE!!!!!");
+}
+
+void blinkGreen() {
+  setColor(GREEN, 0);
+  setColor(GREEN, 1);
+  setColor(GREEN, 2);
+  delay(250); // Time until a clap is over
+  setColor(OFF, 0);
+  setColor(OFF, 1);
+  setColor(OFF, 2);
 }
 
