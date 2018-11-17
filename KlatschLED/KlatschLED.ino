@@ -16,6 +16,44 @@ void  setup()
 }
 void  loop()
 {
+
+}
+
+boolean checkKnockPattern(int time_dist, int knock_number) {
+  int knockCounter = 0;
+  val = digitalRead(buttonpin); //read the value of the digital interface 3 assigned to val
+  
+  if (val == HIGH) //when the switch sensor have signal, LED blink
+  {
+    knockCounter++;
+    lastSoundDetectTime = millis();
+    Serial.println("TON 1 WAHRGENOMMEN!");
+    delay(80);
+    val = digitalRead(buttonpin);
+    if (val == LOW) {
+      val = digitalRead(buttonpin);
+      Serial.println("Warte auf Ton 2");
+      boolean ton2 = false;
+      while (((millis() - lastSoundDetectTime) < 800) && (val == LOW)) {
+        val = digitalRead(buttonpin);
+        if (val == HIGH)
+        {
+          ledZustand = !ledZustand;
+          digitalWrite(Led, ledZustand);
+          Serial.println("Ton 2 wahrgenommen");
+          ton2 = true;
+          delay(30);
+        }
+      }
+      if (!ton2) {
+        Serial.println("kein Ton 2 wahrgenommen!");
+      }
+      ton2 = false;
+    }
+  }
+}
+
+void doubleKnock() {
   val = digitalRead(buttonpin); //read the value of the digital interface 3 assigned to val
   if (val == HIGH) //when the switch sensor have signal, LED blink
   {
@@ -27,21 +65,22 @@ void  loop()
       val = digitalRead(buttonpin);
       Serial.println("Warte auf Ton 2");
       boolean ton2 = false;
-      while (((millis() - lastSoundDetectTime) < 800) && (val==LOW)) {
+      while (((millis() - lastSoundDetectTime) < 800) && (val == LOW)) {
         val = digitalRead(buttonpin);
         if (val == HIGH)
         {
           ledZustand = !ledZustand;
           digitalWrite(Led, ledZustand);
           Serial.println("Ton 2 wahrgenommen");
-          ton2=true;
+          ton2 = true;
           delay(30);
         }
       }
-      if(!ton2){
+      if (!ton2) {
         Serial.println("kein Ton 2 wahrgenommen!");
       }
       ton2 = false;
     }
   }
 }
+
