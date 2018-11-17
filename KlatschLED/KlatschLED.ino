@@ -20,6 +20,7 @@ void  setup()
 void  loop()
 {
   Serial.println(checkKnockPattern(2000,3));
+  delay(3000);
 }
 
 boolean checkKnockPattern(int time_dist, int knock_number) {
@@ -45,14 +46,25 @@ boolean checkKnockPattern(int time_dist, int knock_number) {
       return true;
     }
     lastSoundDetectTime = millis();
+    delay(250); //Let clap cling off
     do {
       delay(waitingDelay);
       val = digitalRead(buttonpin); //read the value of the digital interface 3 assigned to val
+      if(millis()-lastSoundDetectTime> time_dist+tolerance){
+        strike();
+        return false;
+      }
     } while (val == LOW);
     long newSoundDetectTime = millis();
     long timeDiff = newSoundDetectTime-lastSoundDetectTime;
-    if(timeDiff > time_dist + tolerance) strike();
-    if(timeDiff < time_dist - tolerance) strike();
+    if(timeDiff > time_dist + tolerance){
+      strike();
+      return false;
+    }
+    if(timeDiff < time_dist - tolerance) {
+      strike();
+      return false;
+    }
   }
 }
 
@@ -89,5 +101,6 @@ void doubleKnock() {
 
 void strike() {
   //TODO
+  Serial.println("STRIKEEEEE!!!!!");
 }
 
